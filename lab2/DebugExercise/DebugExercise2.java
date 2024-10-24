@@ -10,10 +10,7 @@ public class DebugExercise2 {
         int w = (b - a) >> 31;
         /* If you're stepping into this function, click the
            step out button because you're not going to learn anything. */
-        int z = ~(b - a) >> 31;
-
-        int max = b & w | a & z;
-        return max;
+        return Math.max(a, b);
     }
 
 
@@ -46,7 +43,7 @@ public class DebugExercise2 {
         }
         int[] returnArray = new int[a.length];
         for (int i = 0; i < a.length; i += 1) {
-            int biggerValue = Math.max(a[i], b[i]);
+            int biggerValue = max(a[i], b[i]);
             returnArray[i] = biggerValue;
         }
 
