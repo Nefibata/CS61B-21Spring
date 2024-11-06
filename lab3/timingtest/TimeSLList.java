@@ -33,21 +33,28 @@ public class TimeSLList {
         Ns.addLast(16000);
         Ns.addLast(32000);
         Ns.addLast(64000);
-        Ns.addLast(128000);
+        opCounts.addLast(1000);
+        opCounts.addLast(1000);
+        opCounts.addLast(1000);
+        opCounts.addLast(1000);
+        opCounts.addLast(1000);
+        opCounts.addLast(1000);
+        opCounts.addLast(1000);
         for(int i=0;i<8;i++){
             int N = Ns.get(i);
+            int M=opCounts.get(i);
             SLList<Integer> temp =new SLList<>();
             for (int j=0;j<N;j++){
                 temp.addLast(j);
             }
             Stopwatch sw = new Stopwatch();
-            for (int j=0;j<N;j++){
+            for (int j=0;j<M;j++){
                 temp.getLast();
             }
             double timeInSeconds = sw.elapsedTime();
             times.addLast(timeInSeconds);
         }
-        printTimingTable(Ns,times,Ns);
+        printTimingTable(Ns,times,opCounts);
     }
 
 }
