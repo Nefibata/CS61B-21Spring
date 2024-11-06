@@ -1,7 +1,6 @@
 package randomizedtest;
 
 import edu.princeton.cs.algs4.StdRandom;
-import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -23,9 +22,9 @@ public class TestBuggyAList {
       Bhasbug.addLast(5);
       Bhasbug.addLast(6);
 
-      Assert.assertEquals(ANobug.size(),Bhasbug.size());
-      Assert.assertEquals(ANobug.removeLast(),Bhasbug.removeLast());
-      Assert.assertEquals(ANobug.removeLast(),Bhasbug.removeLast());
+      assertEquals(ANobug.size(),Bhasbug.size());
+      assertEquals(ANobug.removeLast(),Bhasbug.removeLast());
+      assertEquals(ANobug.removeLast(),Bhasbug.removeLast());
   }
 
   @Test
@@ -44,17 +43,17 @@ public class TestBuggyAList {
               // size
               int size = L.size();
               int sizeB = B.size();
-              Assert.assertEquals(size,sizeB);
+              assertEquals(size,sizeB);
           }else if (operationNumber == 2 && L.size()>0) {
               // Last
               int Last = L.getLast();
               int LastB = B.getLast();
-              Assert.assertEquals(Last,LastB);
+              assertEquals(Last,LastB);
           } else if (operationNumber == 3 && L.size()>0) {
               // removeLast
               int removeLast = L.removeLast();
               int removeLastB=B.removeLast();
-              Assert.assertEquals(removeLast,removeLastB);
+              assertEquals(removeLast,removeLastB);
           }
       }
   }
