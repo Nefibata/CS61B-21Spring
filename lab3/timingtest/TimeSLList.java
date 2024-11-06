@@ -32,10 +32,6 @@ public class TimeSLList {
         Ns.addLast(8000);
         Ns.addLast(16000);
         Ns.addLast(32000);
-        Ns.addLast(64000);
-        Ns.addLast(128000);
-        opCounts.addLast(100);
-        opCounts.addLast(100);
         opCounts.addLast(100);
         opCounts.addLast(100);
         opCounts.addLast(100);
@@ -43,7 +39,8 @@ public class TimeSLList {
         opCounts.addLast(100);
         opCounts.addLast(100);
 
-        for(int i=0;i<7;i++){
+
+        for(int i=0;i<6;i++){
             int N = Ns.get(i);
             int M=opCounts.get(i);
             SLList<Integer> temp =new SLList<>();
