@@ -34,13 +34,13 @@ public class TimeSLList {
         Ns.addLast(32000);
         Ns.addLast(64000);
 
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
+        opCounts.addLast(100);
+        opCounts.addLast(100);
+        opCounts.addLast(100);
+        opCounts.addLast(100);
+        opCounts.addLast(100);
+        opCounts.addLast(100);
+        opCounts.addLast(100);
 
         for(int i=0;i<7;i++){
             int N = Ns.get(i);
