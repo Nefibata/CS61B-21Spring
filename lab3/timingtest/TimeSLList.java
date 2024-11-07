@@ -47,7 +47,6 @@ public class TimeSLList {
             for (int j=0;j<N;j++){
                 temp.addLast(j);
             }
-
             Stopwatch sw = new Stopwatch();
             for (int j=0;j<M;j++){
                 temp.getLast();
