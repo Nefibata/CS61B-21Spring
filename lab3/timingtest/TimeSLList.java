@@ -26,29 +26,16 @@ public class TimeSLList {
         AList<Integer> Ns =new AList<>();
         AList<Double> times = new AList<>();
         AList<Integer> opCounts = new AList<>();
-        Ns.addLast(1000);
-        Ns.addLast(2000);
-        Ns.addLast(4000);
-        Ns.addLast(8000);
-        Ns.addLast(16000);
-        Ns.addLast(32000);
-        Ns.addLast(64000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
-        opCounts.addLast(1000);
+        int M = 1000;
         int N = 500;
         SLList<Integer> temp =new SLList<>();
         for(int i=0;i<7;i++){
             N=N*2;
-            int M=opCounts.get(i);
+            Ns.addLast(N);
+            opCounts.addLast(M);
             for (int j=N/2;j<N;j++){
                 temp.addLast(j);
             }
-
             Stopwatch sw = new Stopwatch();
             for (int j=0;j<M;j++){
                 temp.getLast();
