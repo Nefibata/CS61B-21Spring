@@ -18,42 +18,42 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         size=0;
     }
     private void doubleArr(){
+        head++;
+        head=head%arLength;
         arLength+=arLength;
         Object [] AR=new Object[arLength];
-        int i=0;
-        for (T temp:this
-             ) {
-            AR[i]=temp;
-            i++;
+        for (int i=head,j=1;j<=size;i++,j++){
+            head=head%this.ar.length;
+            AR[j]=this.ar[i];
         }
         this.ar=AR;
         head=0;
-        tail=i+1;
+        tail=size+1;
 
 
     }
     private void divArr(){
+        head++;
+        head=head%arLength;
         arLength=arLength/2;
         Object [] AR=new Object[arLength];
-        int i=0;
-        for (T temp:this
-        ) {
-            AR[i]=temp;
-            i++;
+        for (int i=head,j=1;j<=size;i++,j++){
+            head=head%this.ar.length;
+            AR[j]=this.ar[i];
         }
         this.ar=AR;
         head=0;
-        tail=i+1;
+        tail=size+1;
 
     }
 
     @Override
     public void addFirst(T item) {
         if (tail==head) doubleArr();
+        this.ar[head]=item;
         head--;
         head+=arLength;
         head=head%arLength;
-        this.ar[head]=item;
         size++;
     }
 
@@ -83,21 +83,24 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
 
     @Override
     public T removeFirst() {
-        if (size<=arLength/4) divArr();
-        T temp= (T) this.ar[head];
+        if (isEmpty())return null;
+        if (size<=arLength/4&&arLength!=8) divArr();
+        Object temp;
         head++;
         head=head%arLength;
+        temp = this.ar[head];
         size--;
-        return temp;
+        return (T) temp;
     }
 
     @Override
     public T removeLast() {
-        if (size<=arLength/4) divArr();
-        T temp= (T) this.ar[tail];
+        if (isEmpty())return null;
+        if (size<=arLength/4&&arLength!=8) divArr();
         tail--;
         tail+=arLength;
         tail=tail%arLength;
+        T temp= (T) this.ar[tail];
         size--;
         return temp;
     }
