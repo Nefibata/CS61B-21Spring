@@ -1,16 +1,16 @@
 package deque;
 
-public class List <T> {
+public class ListNode<T> {
     private T value;
-    private List<T> pr;
-    private List<T> next;
-    public List(T value,List<T> pr,List<T> next){
+    private ListNode<T> pr;
+    private ListNode<T> next;
+    public ListNode(T value,ListNode<T> pr,ListNode<T> next){
         this.next=next;
         this.pr=pr;
         this.value=value;
     }
 
-    public List<T> getNext() {
+    public ListNode<T> getNext() {
         return next;
     }
 
@@ -18,15 +18,15 @@ public class List <T> {
         return value;
     }
 
-    public List<T> getPr() {
+    public ListNode<T> getPr() {
         return pr;
     }
 
-    public void setNext(List<T> next) {
+    public void setNext(ListNode<T> next) {
         this.next = next;
     }
 
-    public void setPr(List<T> pr) {
+    public void setPr(ListNode<T> pr) {
         this.pr = pr;
     }
 
