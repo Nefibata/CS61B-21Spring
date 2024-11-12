@@ -78,6 +78,16 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
 
     @Override
     public void printDeque() {
+        StringBuilder sb=new StringBuilder();
+        head++;
+        head=head%arLength;
+        for (int i=head,j=1;j<=size;i++,j++){
+            head=head%arLength;
+            sb.append(ar[head].toString());
+            sb.append(" ");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        System.out.println(sb);
 
     }
 
