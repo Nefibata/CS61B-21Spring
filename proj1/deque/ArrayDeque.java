@@ -82,8 +82,8 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         head++;
         head=head%arLength;
         for (int i=head,j=1;j<=size;i++,j++){
-            head=head%arLength;
-            sb.append(ar[head].toString());
+            i=i%arLength;
+            sb.append(ar[i].toString());
             sb.append(" ");
         }
         sb.deleteCharAt(sb.length()-1);
@@ -158,7 +158,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
 
     @Override
     public boolean equals(Object o){
-        if (!( o instanceof ArrayDeque)){
+        if (!(  o instanceof LinkedListDeque || o instanceof ArrayDeque)){
             return false;
         }
         ArrayDeque<T> temp= (ArrayDeque<T>) o;

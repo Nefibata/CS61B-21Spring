@@ -161,4 +161,13 @@ public class LinkedListDequeTest {
 
 
     }
+    @Test
+    public void bigLLDequeTestToString() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        for (int i = 0; i < 10000; i++) {
+            lld1.addLast(i);
+        }
+        lld1.printDeque();
+
+    }
 }

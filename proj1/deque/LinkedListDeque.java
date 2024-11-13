@@ -38,6 +38,7 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
             T tempT=temp.getValue();
             s.append(tempT.toString());
             s.append(" ");
+            temp=temp.getNext();
         }
         if (size!=0){
             s.deleteCharAt(s.length()-1);
@@ -100,7 +101,7 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
         }
     }
     public boolean equals(Object o){
-        if (!( o instanceof LinkedListDeque)){
+        if (!( o instanceof LinkedListDeque || o instanceof ArrayDeque)){
             return false;
         }
         LinkedListDeque<T> temp= (LinkedListDeque<T>) o;
