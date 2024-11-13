@@ -153,4 +153,33 @@ public class ArrayDequeTest {
         }
 
     }
+    @Test
+    /* Add large number of elements to deque; check if order is correct. */
+    public void lLDequeTest2() {
+        ArrayDeque<Integer> ArrayDeque = new ArrayDeque<Integer>();
+        ArrayDeque.addFirst(0);
+        ArrayDeque.addFirst(1);
+        ArrayDeque.addFirst(2);
+        ArrayDeque.addLast(3);
+        ArrayDeque.addLast(4);
+        ArrayDeque.addFirst(5);
+        ArrayDeque.size();
+        ArrayDeque.addFirst(7);
+        ArrayDeque.addFirst(8);
+
+
+
+
+    }
+@Test
+    public void bigLLDequeTestEquals() {
+        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        ArrayDeque<Integer> lld2 = new ArrayDeque<Integer>();
+        for (int i = 0; i < 10000; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+        }
+        assertTrue("Should are same ", lld1.equals(lld2));
+
+    }
 }

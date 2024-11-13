@@ -23,7 +23,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         arLength+=arLength;
         Object [] AR=new Object[arLength];
         for (int i=head,j=1;j<=size;i++,j++){
-            head=head%this.ar.length;
+            i=i%this.ar.length;
             AR[j]=this.ar[i];
         }
         this.ar=AR;
@@ -38,7 +38,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
         arLength=arLength/2;
         Object [] AR=new Object[arLength];
         for (int i=head,j=1;j<=size;i++,j++){
-            head=head%this.ar.length;
+            i=i%this.ar.length;
             AR[j]=this.ar[i];
         }
         this.ar=AR;
@@ -155,4 +155,20 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
             return temp;
         }
     }
+
+    @Override
+    public boolean equals(Object o){
+        if (!( o instanceof ArrayDeque)){
+            return false;
+        }
+        ArrayDeque<T> temp= (ArrayDeque<T>) o;
+        if (temp.size!=this.size)return false;
+        for (int i=0;i<this.size();i++){
+            T o1=this.get(i);
+            T o2=temp.get(i);
+            if (!o1.equals(o2))return false;
+        }
+        return true;
+    }
+
 }
