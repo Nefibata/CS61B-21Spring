@@ -101,27 +101,18 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
         }
     }
     public boolean equals(Object o){
-        if (o instanceof LinkedListDeque ){
-            LinkedListDeque<T> temp= (LinkedListDeque<T>) o;
-            if (temp.size!=this.size)return false;
-            for (int i=0;i<this.size();i++){
-                T o1=this.get(i);
-                T o2=temp.get(i);
-                if (!o1.equals(o2))return false;
+        if (o instanceof Deque ) {
+            Deque<T> temp = (Deque) o;
+            if (temp.size() != this.size) return false;
+            for (int i = 0; i < this.size(); i++) {
+                T o1 = this.get(i);
+                T o2 = temp.get(i);
+                if (!o1.equals(o2)) return false;
             }
-        }else if (o instanceof ArrayDeque){
-            ArrayDeque<T> temp= (ArrayDeque<T>) o;
-            if (temp.size()!=this.size)return false;
-            for (int i=0;i<this.size();i++){
-                T o1=this.get(i);
-                T o2=temp.get(i);
-                if (!o1.equals(o2))return false;
-            }
-        }else {
-            return false;
+            return true;
         }
+        return false;
 
-        return true;
     }
     public T getRecursive(int index){
         return Recursive(index,head.getNext());
