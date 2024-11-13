@@ -192,4 +192,16 @@ public class ArrayDequeTest {
         lld1.printDeque();
 
     }
+
+    @Test
+    public void bigDequeTestEquals() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        ArrayDeque<Integer> lld2 = new ArrayDeque<Integer>();
+        for (int i = 0; i < 1000; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+        }
+        assertTrue("Should are same ", lld1.equals(lld2));
+
+    }
 }

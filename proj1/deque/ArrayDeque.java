@@ -155,19 +155,28 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
             return temp;
         }
     }
-
     @Override
     public boolean equals(Object o){
-        if (!(  o instanceof LinkedListDeque || o instanceof ArrayDeque)){
+        if (o instanceof LinkedListDeque ){
+            LinkedListDeque<T> temp= (LinkedListDeque<T>) o;
+            if (temp.size()!=this.size)return false;
+            for (int i=0;i<this.size();i++){
+                T o1=this.get(i);
+                T o2=temp.get(i);
+                if (!o1.equals(o2))return false;
+            }
+        }else if (o instanceof ArrayDeque){
+            ArrayDeque<T> temp= (ArrayDeque<T>) o;
+            if (temp.size()!=this.size)return false;
+            for (int i=0;i<this.size();i++){
+                T o1=this.get(i);
+                T o2=temp.get(i);
+                if (!o1.equals(o2))return false;
+            }
+        }else {
             return false;
         }
-        ArrayDeque<T> temp= (ArrayDeque<T>) o;
-        if (temp.size!=this.size)return false;
-        for (int i=0;i<this.size();i++){
-            T o1=this.get(i);
-            T o2=temp.get(i);
-            if (!o1.equals(o2))return false;
-        }
+
         return true;
     }
 
