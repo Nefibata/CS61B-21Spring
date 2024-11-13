@@ -67,7 +67,7 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
         return removeT;
     }
     public T get(int index){
-        if (index<=size-1)return null;
+        if (index>size-1)return null;
         ListNode<T> temp=this.head;
         for (int i=0;i<=index;i++){
             temp=temp.getNext();
@@ -103,10 +103,12 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
         if (!( o instanceof LinkedListDeque)){
             return false;
         }
-        LinkedListDeque<T> temp=(LinkedListDeque<T>) o;
+        LinkedListDeque<T> temp= (LinkedListDeque<T>) o;
         if (temp.size!=this.size)return false;
         for (int i=0;i<this.size();i++){
-            if (!this.get(i).equals(temp.get(i)))return false;
+            T o1=this.get(i);
+            T o2=temp.get(i);
+            if (!o1.equals(o2))return false;
         }
         return true;
     }

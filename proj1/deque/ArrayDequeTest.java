@@ -140,4 +140,17 @@ public class ArrayDequeTest {
 
 
     }
+
+    @Test
+    public void bigLLArrayTestIterator() {
+        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+        for (int i = 0; i < 10000; i++) {
+            lld1.addLast(i);
+        }
+        for (Integer i:lld1
+        ) {
+            assertEquals( i,lld1.get(i));
+        }
+
+    }
 }

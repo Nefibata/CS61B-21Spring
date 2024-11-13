@@ -148,10 +148,9 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
 
         @Override
         public T next() {
-            T temp = (T) this.ar[head];
-            head--;
-            head+=arLength;
+            head++;
             head=head%arLength;
+            T temp = (T) this.ar[head];
             size--;
             return temp;
         }
