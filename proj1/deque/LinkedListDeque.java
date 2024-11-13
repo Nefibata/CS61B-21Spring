@@ -25,9 +25,6 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
         tail.setPr(temp);
         size++;
     }
-    public boolean isEmpty(){
-        return size==0;
-    }
     public int size(){
         return size;
     }
@@ -117,7 +114,7 @@ public class LinkedListDeque <T> implements Deque<T>,Iterable <T>{
     public T getRecursive(int index){
         return Recursive(index,head.getNext());
     }
-    public T Recursive(int index,ListNode<T > head){
+    private T Recursive(int index,ListNode<T > head){
         if(index==0)return head.getValue();
         return Recursive(index-1,head.getNext());
     }
