@@ -119,6 +119,7 @@ public class ArrayDeque<T> implements Deque<T>,Iterable<T>{
     public T get(int index) {
         int temp=head;
         temp+=index;
+        temp++;
         temp=temp%arLength;
         return (T)ar[temp];
     }
