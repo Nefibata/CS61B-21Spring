@@ -12,7 +12,7 @@ A:
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A:逻辑写的过于混乱了，没有良好的开发规范
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
@@ -20,11 +20,11 @@ A:
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A:了解一下java的底层实现
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A:我会用良好的开发规范去写它。
 
 -----
 
@@ -36,7 +36,7 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A:好像有一个不知道算不算，我选择用两个哨兵节点来解决dll的增删。
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
@@ -48,7 +48,7 @@ A:
 
 Q: What do you wish you would have known before writing LinkedListDeque, if anything?
 
-A:
+A:同样是java的底层是怎么实现的
 
 Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
 
@@ -60,4 +60,4 @@ Meta:
 
 Q: Did you like this design review process? Anything we should do differently next time?
 
-A: 
+A: 挺好的，就是可以希望把评测标准写的更清楚点，有些评测点不明确需要我去猜测。
