@@ -3,19 +3,17 @@ package bstmap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
-public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
+public  class BSTMap <K extends Comparable<K>, V> implements Map61B <K, V>{
     private int  size=0;
 
     private BSTNode root=null;
 
     private class BSTNode {
-        private k key;
-        private v val;
+        private K key;
+        private V val;
         private BSTNode left,right;
-        public BSTNode(k key, v val){
+        public BSTNode(K key, V val){
             this.key = key;
             this.val = val;
         }
@@ -29,7 +27,7 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
     }
 
     @Override
-    public boolean containsKey(k key) {
+    public boolean containsKey(K key) {
         BSTNode temp=root;
         while (temp!=null){
             if (temp.key.compareTo(key)==0){
@@ -44,7 +42,7 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
     }
 
     @Override
-    public v get(k key) {
+    public V get(K key) {
         BSTNode temp=root;
         while (temp!=null){
             if (temp.key.compareTo(key)==0){
@@ -64,7 +62,7 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
     }
 
     @Override
-    public void put(k key, v value) {
+    public void put(K key, V value) {
         size++;
         BSTNode temp=root;
         while (true){
@@ -90,15 +88,15 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
     }
 
     @Override
-    public Set<k> keySet() {
+    public Set<K> keySet() {
         if(root == null){
             return null;
         }
-        Set<k> set = new HashSet<>();
+        Set<K> set = new HashSet<>();
         addKey(root,set);
         return set;
     }
-    private void addKey(BSTNode node, Set<k>set){
+    private void addKey(BSTNode node, Set<K>set){
         if(node == null){
             return ;
         }
@@ -108,12 +106,12 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
     }
 
     @Override
-    public v remove(k key) {
+    public V remove(K key) {
         BSTNode temp=root;
         BSTNode parent=root;
         while (temp!=null){
             if (temp.key.compareTo(key)==0){
-                v value=temp.val;
+                V value=temp.val;
                 if (parent.left==temp){
                     if (temp.left==null){
                         parent.left=temp.right;
@@ -196,7 +194,7 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
 
 
     @Override
-    public v remove(k key, v value) {
+    public V remove(K key, V value) {
         if (this.get(key).equals(value)){
             return this.remove(key);
         }
@@ -204,8 +202,8 @@ public  class BSTMap <k extends Comparable<k>,v> implements Map61B <k,v>{
     }
 
     @Override
-    public Iterator<k> iterator() {
-        Set<k> set=this.keySet();
+    public Iterator<K> iterator() {
+        Set<K> set=this.keySet();
         return set.iterator();
     }
 }
