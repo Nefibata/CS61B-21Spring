@@ -206,12 +206,16 @@ public  class BSTMap <K extends Comparable<K>, V> implements Map61B <K, V>{
         Set<K> set=this.keySet();
         return set.iterator();
     }
-    public void printInOrder(BSTNode node){
+    public void printInOrder(){
+        this.printInOrderP(root);
+    }
+
+    private void printInOrderP(BSTNode node){
         if (node==null){
             return;
         }
         System.out.println(node.key+""+node.val);
-        printInOrder(node.left);
-        printInOrder(node.right);
+        printInOrderP(node.left);
+        printInOrderP(node.right);
     }
 }
