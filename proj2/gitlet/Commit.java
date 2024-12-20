@@ -2,7 +2,11 @@ package gitlet;
 
 // TODO: any imports you need here
 
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.io.File;
+import java.io.Serializable;
+import java.util.*;
+
+import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -10,7 +14,7 @@ import java.util.Date; // TODO: You'll likely use this in this class
  *
  *  @author TODO
  */
-public class Commit {
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -20,7 +24,46 @@ public class Commit {
      */
 
     /** The message of this Commit. */
+
+    //commit存储
+    public static final File commits=join(".git\\objects","commits");
+
     private String message;
 
+    private Date now;
+
+    private List<String> parents=new ArrayList<>();
+
+    //连接Blob
+    private TreeSet<String> blobs=new TreeSet<>();
+
     /* TODO: fill in the rest of this class. */
+    public Commit(String message,List<String> parents,Date now){
+        this.message=message;
+        this.parents=parents;
+        this.now=now;
+    }
+    public TreeSet<String> getBlobsT(){
+        return this.blobs;
+    }
+    public void setBlobsT(TreeSet<String> blobs){
+        this.blobs=blobs;
+    }
+
+    public void addBlob(String blobId){
+        this.blobs.add(blobId);
+    }
+    public boolean isContentBlob(String blobId){
+        return this.blobs.contains(blobId);
+    }
+    public void rmBlob(String blobId){
+        this.blobs.remove(blobId);
+    }
+    public void saveCommit(){
+        File temp = join(commits,getId());
+        writeObject(temp,this);
+    }
+    public String getId(){
+        return sha1(this);
+    }
 }
