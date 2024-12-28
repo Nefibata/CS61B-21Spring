@@ -3,6 +3,7 @@ package gitlet;
 // TODO: any imports you need here
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class Commit implements Serializable {
     /** The message of this Commit. */
 
     //commit存储
-    public static final File commits=join(".git\\objects","commits");
+    public static final File commits=join(Repository.obj,"commits");
 
     private String message;
 
@@ -64,10 +65,15 @@ public class Commit implements Serializable {
 
     public void saveCommit(){
         File temp = join(commits,getId());
+        try {
+            temp.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         writeObject(temp,this);
     }
     public String getId(){
-        return sha1(this);
+        return sha1(message,now.toString(),parents.toString(),blobs.toString(),name_blobs.toString());
     }
     public List<String> getParents(){
         return parents;

@@ -14,49 +14,50 @@ public class Main {
      */
     public static void main(String[] args) {
         String firstArg = args[0];
-        if (args.length==1){
+        if (args.length==0){
             System.out.println("Please enter a command.");
             System.exit(0);
         }
+
         switch(firstArg) {
             case "init":
                 checkInitBefore();
-                checkOperands(2,args);
+                checkOperands(1,args);
                 Repository.init();
                 break;
             case "add":
                 checkInit();
-                checkOperands(3,args);
-                Repository.add(args[2]);
+                checkOperands(2,args);
+                Repository.add(args[1]);
                 break;
             case "commit":
                 checkInit();
-                if(args.length==2){
+                if(args.length==1){
                     System.out.println("Please enter a commit message.");
                     System.exit(0);
                 }
-                checkOperands(3,args);
-                Repository.commit(args[2],new Date());
+                checkOperands(2,args);
+                Repository.commit(args[1],new Date());
                 break;
 
             case "rm":
                 checkInit();
-                checkOperands(3,args);
-                Repository.rm(args[2]);
+                checkOperands(2,args);
+                Repository.rm(args[1]);
                 break;
 
             case "checkout":
                 checkInit();
-                if(args.length==3){
-                    Repository.checkout(args[2]);
+                if(args.length==2){
+                    Repository.checkout(args[1]);
                     break;
                 }
-                if (args.length==4){
-                    Repository.checkout(args[2],args[3]);
+                if (args.length==3){
+                    Repository.checkout(args[1],args[2]);
                     break;
                 }
                 if (args.length==5){
-                    Repository.checkout(args[2],args[3],args[4]);
+                    Repository.checkout(args[1],args[2],args[3]);
                     break;
                 }
                 System.out.println("Incorrect operands.");
@@ -65,7 +66,7 @@ public class Main {
 
             case "log":
                 checkInit();
-                checkOperands(2,args);
+                checkOperands(1,args);
                 Repository.log();
                 break;
 
