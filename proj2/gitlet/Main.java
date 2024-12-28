@@ -56,7 +56,7 @@ public class Main {
                     Repository.checkout(args[1],args[2]);
                     break;
                 }
-                if (args.length==5){
+                if (args.length==4){
                     Repository.checkout(args[1],args[2],args[3]);
                     break;
                 }

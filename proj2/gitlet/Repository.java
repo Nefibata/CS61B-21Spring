@@ -199,14 +199,13 @@ public class Repository {
             System.exit(0);
         }
     }
-    public static void checkout(String branchName,String f ,String file_name){
-        File branchFile = join(branch,branchName);
-        if (!branchFile.exists()) {
+    public static void checkout(String commitId,String f ,String file_name){
+        File commitFile = join(Commit.commits,commitId);
+        if (!commitFile.exists()) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
-        File branchCommit = join(Commit.commits,readContentsAsString(branchFile));
-        Commit branch = readObject(branchCommit,Commit.class);
+        Commit branch = readObject(commitFile,Commit.class);
         if (branch.isContentNameBlob(file_name)){
             String hashName= branch.getBlobHashName(file_name);
             File temp =join(Blob.blobs,hashName);
@@ -243,6 +242,7 @@ public class Repository {
         if (p.getParents().size()==2) System.out.println("Merge: "+p.getParents().get(0).substring(7) +" "+p.getParents().get(1).substring(7));
         System.out.println("Date: "+p.getDate());
         System.out.println(p.getMessage());
+        System.out.println();
     }
 
     private static void initCommit(String message, Date now, List<String> parents){
