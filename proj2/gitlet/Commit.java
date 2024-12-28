@@ -37,6 +37,9 @@ public class Commit implements Serializable {
     //连接Blob
     private TreeSet<String> blobs=new TreeSet<>();
 
+    //连接名字和Blob
+    private TreeMap<String,String> name_blobs=new TreeMap<>();
+
     /* TODO: fill in the rest of this class. */
     public Commit(String message,List<String> parents,Date now){
         this.message=message;
@@ -46,24 +49,45 @@ public class Commit implements Serializable {
     public TreeSet<String> getBlobsT(){
         return this.blobs;
     }
-    public void setBlobsT(TreeSet<String> blobs){
+    public void setBlobsT(TreeSet<String> blobs,TreeMap<String,String> name_blobs){
         this.blobs=blobs;
+        this.name_blobs=name_blobs;
     }
-
-    public void addBlob(String blobId){
+    public void addBlob(String blobId,String blobName){
         this.blobs.add(blobId);
+        this.name_blobs.put(blobName,blobId);
     }
     public boolean isContentBlob(String blobId){
         return this.blobs.contains(blobId);
     }
-    public void rmBlob(String blobId){
-        this.blobs.remove(blobId);
-    }
+
+
     public void saveCommit(){
         File temp = join(commits,getId());
         writeObject(temp,this);
     }
     public String getId(){
         return sha1(this);
+    }
+    public List<String> getParents(){
+        return parents;
+    }
+    public String getDate(){
+        Formatter formatter = new Formatter();
+        formatter.format("%ta %tb %td %tH:%tM:%tS %tY %tz",now,now,now,now,now,now,now,now);
+        return formatter.toString();
+    }
+    public String getMessage(){
+        return message;
+    }
+    public TreeMap<String,String> getName_blobs(){
+        return this.name_blobs;
+    }
+
+    public boolean isContentNameBlob(String s){
+        return name_blobs.containsKey(s);
+    }
+    public String getBlobHashName(String s){
+        return name_blobs.get(s);
     }
 }

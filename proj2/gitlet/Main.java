@@ -31,9 +31,44 @@ public class Main {
                 break;
             case "commit":
                 checkInit();
+                if(args.length==2){
+                    System.out.println("Please enter a commit message.");
+                    System.exit(0);
+                }
                 checkOperands(3,args);
                 Repository.commit(args[2],new Date());
                 break;
+
+            case "rm":
+                checkInit();
+                checkOperands(3,args);
+                Repository.rm(args[2]);
+                break;
+
+            case "checkout":
+                checkInit();
+                if(args.length==3){
+                    Repository.checkout(args[2]);
+                    break;
+                }
+                if (args.length==4){
+                    Repository.checkout(args[2],args[3]);
+                    break;
+                }
+                if (args.length==5){
+                    Repository.checkout(args[2],args[3],args[4]);
+                    break;
+                }
+                System.out.println("Incorrect operands.");
+                System.exit(0);
+                break;
+
+            case "log":
+                checkInit();
+                checkOperands(2,args);
+                Repository.log();
+                break;
+
 
             default:
                 System.out.println("No command with that name exists.");

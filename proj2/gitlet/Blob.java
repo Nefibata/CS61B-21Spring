@@ -10,13 +10,13 @@ public class Blob implements Serializable {
     //blob存储
     public static final File blobs=join(".git\\objects","blobs");
 
-    private byte[] content;
+    private final byte[] content;
 
-    private String fileName;
+    private final String fileName;
 
-    public Blob (byte[] content,String fileName){
-        this.content=content;
-        this.fileName=fileName;
+    public Blob (File file){
+        this.content=readContents(file);
+        this.fileName= file.getName();
     }
     public void saveBlobStage(File newFile){ ;
         writeObject(newFile,this);
@@ -24,4 +24,11 @@ public class Blob implements Serializable {
     public String getId(){
         return  sha1(this);
     }
+    public String getFileName(){
+        return fileName;
+    }
+    public byte[] getContent() {
+        return content;
+    }
+
 }
