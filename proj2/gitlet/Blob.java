@@ -8,7 +8,7 @@ import static gitlet.Utils.*;
 public class Blob implements Serializable {
 
     //blob存储
-    public static final File blobs=join(".git\\objects","blobs");
+    public static final File blobs=join(Repository.obj,"blobs");
 
     private final byte[] content;
 
