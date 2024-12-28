@@ -260,8 +260,9 @@ public class Repository {
     //读取head的commit
     private static Commit readHead(){
         String headString = readContentsAsString(head);
-        File headCommit=join(Commit.commits,headString);
-        return readObject(headCommit,Commit.class);
+        File headCommit=new File(headString);
+        File headObj=join(Commit.commits,readContentsAsString(headCommit));
+        return readObject(headObj,Commit.class);
     }
     private static void writeHeadBranch(String s){
         String headString = readContentsAsString(head);

@@ -5,6 +5,8 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static gitlet.Utils.*;
@@ -79,9 +81,13 @@ public class Commit implements Serializable {
         return parents;
     }
     public String getDate(){
-        Formatter formatter = new Formatter();
-        formatter.format("%ta %tb %td %tH:%tM:%tS %tY %tz",now,now,now,now,now,now,now,now);
+      /*  Formatter formatter = new Formatter(Locale.US);
+        formatter.format("EEE MMM d HH:mm:ss yyyy Z",now);
         return formatter.toString();
+
+       */
+        DateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
+        return dateFormat.format(now);
     }
     public String getMessage(){
         return message;
