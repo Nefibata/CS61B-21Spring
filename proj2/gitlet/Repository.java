@@ -159,10 +159,13 @@ public class Repository {
 
     public static void rm(String fileName){
         File rmFile = join(CWD,fileName);
+        Blob rmBlob;
         if (!rmFile.exists()){
-            System.out.println("File does not exist.");
+            rmBlob  = new Blob(fileName);
+        }else {
+           rmBlob = new Blob(rmFile);
         }
-        Blob rmBlob = new Blob(rmFile);
+
         Commit nowHead=readHead();
         File [] files=stage.listFiles();
         if (files!=null){
@@ -194,7 +197,7 @@ public class Repository {
         }
         File branchFile = join(branch,branch_name);
         if (!branchFile.exists()) {
-            System.out.println("No commit with that id exists.");
+            System.out.println("No such branch exists.");
             System.exit(0);
         }
         File branchCommit = join(Commit.commits,readContentsAsString(branchFile));
@@ -233,6 +236,10 @@ public class Repository {
 
     }
     public static void checkout(String f ,String file_name){
+        if (!f.equals("--")){
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
         Commit head =readHead();
         if (head.isContentNameBlob(file_name)){
            String hashName= head.getBlobHashName(file_name);
@@ -253,6 +260,10 @@ public class Repository {
         }
     }
     public static void checkout(String commitId,String f ,String file_name){
+        if (!f.equals("--")){
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
         File commitFile = join(Commit.commits,commitId);
         if (!commitFile.exists()) {
             System.out.println("No commit with that id exists.");
@@ -415,6 +426,7 @@ public class Repository {
             System.out.println("Cannot remove the current branch.");
             System.exit(0);
         }
+        rmBranch.delete();
 
     }
 

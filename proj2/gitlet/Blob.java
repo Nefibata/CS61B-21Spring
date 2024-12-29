@@ -19,6 +19,10 @@ public class Blob implements Serializable {
         this.content=readContents(file);
         this.fileName= file.getName();
     }
+    public Blob (String fileName){
+        this.fileName=fileName;
+        this.content=null;
+    }
     public void saveBlobStage(File newFile){ ;
         writeObject(newFile,this);
     }
