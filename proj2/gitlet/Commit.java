@@ -102,4 +102,9 @@ public class Commit implements Serializable {
     public String getBlobHashName(String s){
         return name_blobs.get(s);
     }
+
+    public void rmBlobs(String name){
+       String s= this.name_blobs.remove(name);
+       this.blobs.remove(s);
+    }
 }

@@ -118,6 +118,12 @@ public class Repository {
             File newFile = join(stage,BlobId);
             tempBlob.saveBlobStage(newFile);
         }
+        for (File f:rmStage.listFiles()
+             ) {
+            if (readObject(f,Blob.class).getFileName().equals(fileName)){
+                f.delete();
+            }
+        }
     }
 
     public static void commit(String message, Date now){
@@ -128,7 +134,8 @@ public class Repository {
         //设置当前tree
         newHead.setBlobsT(nowHead.getBlobsT(),nowHead.getName_blobs());
         File[] stageFilesList = stage.listFiles();
-        if (stageFilesList.length==0){
+        File [] rmFileList =rmStage.listFiles();
+        if (stageFilesList.length==0&&rmFileList.length==0){
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
@@ -137,13 +144,17 @@ public class Repository {
             Blob tempB =readObject(f,Blob.class);
             newHead.addBlob(f.getName(),tempB.getFileName());
             File temp=join(Blob.blobs,f.getName());
-            writeContents(temp,readContents(f));
-            f.delete();
+            writeContents(temp, (Object) readContents(f));
+        }
+        for (File f:rmFileList
+             ) {
+            Blob tempB =readObject(f,Blob.class);
+            newHead.rmBlobs(tempB.getFileName());
         }
 
         newHead.saveCommit();
         writeHeadBranch(newHead.getId());
-
+        clearStageAndRm();
     }
 
     public static void rm(String fileName){
@@ -157,14 +168,13 @@ public class Repository {
         if (files!=null){
             for (File temp:files
             ) {
-                if (temp.getName().equals(rmBlob.getId())){
+                if (readObject(temp,Blob.class).getFileName().equals(rmBlob.getFileName())){
                     temp.delete();
-                    return;
                 }
 
             }
         }
-        if (nowHead.isContentBlob(rmBlob.getId())){
+        if (nowHead.isContentNameBlob(rmBlob.getFileName())){
             File temp=join(rmStage,rmBlob.getId());
             writeObject(temp,rmBlob);
         }else {
