@@ -1,11 +1,9 @@
 package gitlet;
 
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -47,6 +45,48 @@ public class Repository {
     public static final File head=join(GITLET_DIR,"HEAD");
 
     /* TODO: fill in the rest of this class. */
+
+
+    private static void initCommit(String message, Date now, List<String> parents){
+        Commit init = new Commit(message,parents,now);
+        init.saveCommit();
+        try {
+            head.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        File branchMaster = join(branch,"master");
+        writeContents(branchMaster,init.getId());
+        writeContents(head,branchMaster.getPath());
+    }
+    //读取head的commit
+    private static Commit readHead(){
+        String headString = readContentsAsString(head);
+        File headCommit=new File(headString);
+        File headObj=join(Commit.commits,readContentsAsString(headCommit));
+        return readObject(headObj,Commit.class);
+    }
+    private static void writeHeadBranch(String s){
+        String headString = readContentsAsString(head);
+        File hedCommit = new File(headString);
+        writeContents(hedCommit,s);
+    }
+    private static void writeHead(String s){
+        writeContents(head,s);
+    }
+    private static void clearStageAndRm(){
+        for (File t:stage.listFiles()
+        ) {
+            t.delete();
+        }
+        for (File t:rmStage.listFiles()
+             ) {
+            t.delete();
+        }
+
+    }
+
+
     public static void init(){
         GITLET_DIR.mkdir();
         stage.mkdir();
@@ -131,6 +171,7 @@ public class Repository {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
+        rmFile.delete();
 
 
     }
@@ -176,6 +217,8 @@ public class Repository {
             }
             writeContents(wf, (Object) bt.getContent());
         }
+        clearStageAndRm();
+
         writeHead(branchFile.getPath());
 
     }
@@ -236,6 +279,17 @@ public class Repository {
         format_log_print(p);
     }
 
+    public static void global_log(){
+        File global = Commit.commits;
+        String[] arr = global.list();
+        for (String t:arr
+             ) {
+            File temp =join(global,t);
+            Commit tempC=readObject(temp,Commit.class);
+            format_log_print(tempC);
+        }
+    }
+
     private static void format_log_print(Commit p) {
         System.out.println("===");
         System.out.println("commit "+p.getId());
@@ -245,32 +299,154 @@ public class Repository {
         System.out.println();
     }
 
-    private static void initCommit(String message, Date now, List<String> parents){
-        Commit init = new Commit(message,parents,now);
-        init.saveCommit();
-        try {
-            head.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public static void find(String arg) {
+        File global = Commit.commits;
+        String[] arr = global.list();
+        boolean flag =true;
+        for (String t:arr
+        ) {
+            File temp =join(global,t);
+            Commit tempC=readObject(temp,Commit.class);
+            if (tempC.getMessage().equals(arg)){
+                System.out.println(tempC.getId());
+                flag=false;
+            }
         }
-        File branchMaster = join(branch,"master");
-        writeContents(branchMaster,init.getId());
-        writeContents(head,branchMaster.getPath());
+        if (flag){
+            System.out.println("Found no commit with that message.");
+        }
     }
-    //读取head的commit
-    private static Commit readHead(){
-        String headString = readContentsAsString(head);
-        File headCommit=new File(headString);
-        File headObj=join(Commit.commits,readContentsAsString(headCommit));
-        return readObject(headObj,Commit.class);
+
+    public static void status() {
+        //branch name
+        File useGetName = new File(readContentsAsString(head));
+        String nowHeadBranch = useGetName.getName();
+        String [] branchNameArr = branch.list();
+        Arrays.sort(branchNameArr);
+        for (int i =0 ; i<branchNameArr.length;i++){
+            if (branchNameArr[i].equals(nowHeadBranch)){
+                branchNameArr[i]="*"+nowHeadBranch;
+            }
+        }
+        format_status_print("Branches",branchNameArr);
+
+        //stage name
+        File [] stageNameArr = stage.listFiles();
+        String [] stageArr = new String[stageNameArr.length];
+        if (stageArr.length!=0) {
+            int i = 0;
+            for (File f : stageNameArr
+            ) {
+
+                stageArr[i] =readObject(f,Blob.class).getFileName();
+                i++;
+            }
+            if (stageArr != null) Arrays.sort(stageArr);
+        }
+        format_status_print("Staged Files",stageArr);
+
+        //rm name
+        File [] rmNameArr = rmStage.listFiles();
+        String [] rmArr = new String[rmNameArr.length];
+        if (rmArr.length!=0) {
+            int i = 0;
+            for (File f : rmNameArr
+            ) {
+                rmArr[i] = readObject(f,Blob.class).getFileName();
+                i++;
+            }
+            Arrays.sort(rmArr);
+        }
+        format_status_print("Removed Files",rmArr);
+
+        //额外学分
+        //Modifications Not Staged For Commit
+        format_status_print("Modifications Not Staged For Commit",new String[0]);
+
+        //Untracked Files
+        format_status_print("Untracked Files",new String[0]);
+
+
+
     }
-    private static void writeHeadBranch(String s){
-        String headString = readContentsAsString(head);
-        File hedCommit = new File(headString);
-        writeContents(hedCommit,s);
+    private static void format_status_print(String s , String [] arr){
+        System.out.println("=== "+s+" ===");
+        for (String t:arr
+             ) {
+            System.out.println(t);
+        }
+        System.out.println();
     }
-    private static void writeHead(String s){
-        writeContents(head,s);
+
+    public static void branch(String s) {
+        File newBranch =join(branch,s);
+        if (newBranch.exists()) System.out.println("A branch with that name already exists.");
+        else {
+            try {
+                newBranch.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String nowId = readHead().getId();
+        writeContents(newBranch,nowId);
     }
+
+    public static void rm_branch(String arg) {
+        File rmBranch = join(branch,arg);
+        if (!rmBranch.exists()){
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        }
+        File useGetName = new File(readContentsAsString(head));
+        String nowHeadBranch = useGetName.getName();
+        if(nowHeadBranch.equals(arg)){
+            System.out.println("Cannot remove the current branch.");
+            System.exit(0);
+        }
+
+    }
+
+    public static void reset(String arg) {
+        File resetFile = join(Commit.commits,arg);
+        if (!resetFile.exists()){
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        }
+        Commit resetC=readObject(resetFile,Commit.class);
+        Commit head = readHead();
+        for (File t:CWD.listFiles()
+             ) {
+            if (t.isFile()){
+                if ((!head.isContentNameBlob(t.getName()))&&resetC.isContentNameBlob(t.getName())){
+                    System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                    System.exit(0);
+                }
+            }
+        }
+        for (File t:CWD.listFiles()
+        ) {
+            if (t.isFile()&& head.isContentNameBlob(t.getName())){
+                t.delete();
+            }
+        }
+        for (String s:resetC.getBlobsT()
+             ) {
+            File t = join(Blob.blobs,s);
+            Blob wB=readObject(t,Blob.class);
+            File w = join(CWD,wB.getFileName());
+            try {
+                w.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            writeContents(w,wB.getContent());
+        }
+        clearStageAndRm();
+
+    }
+
+
 
 }

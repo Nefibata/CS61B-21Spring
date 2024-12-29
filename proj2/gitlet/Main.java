@@ -70,6 +70,41 @@ public class Main {
                 Repository.log();
                 break;
 
+            case "global-log":
+                checkInit();
+                checkOperands(1,args);
+                Repository.global_log();
+                break;
+
+            case "find" :
+                checkInit();
+                checkOperands(2,args);
+                Repository.find(args[1]);
+                break;
+
+            case "status":
+                checkInit();
+                checkOperands(1,args);
+                Repository.status();
+                break;
+
+            case "branch":
+                checkInit();
+                checkOperands(2,args);
+                Repository.branch(args[1]);
+                break;
+
+            case "rm-branch":
+                checkInit();
+                checkOperands(2,args);
+                Repository.rm_branch(args[1]);
+                break;
+
+            case "reset":
+                checkInit();
+                checkOperands(2,args);
+                Repository.reset(args[1]);
+                break;
 
             default:
                 System.out.println("No command with that name exists.");
