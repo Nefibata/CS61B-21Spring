@@ -580,6 +580,17 @@ public class Repository {
         max.addAll(argBranch.getName_blobs().keySet());
         boolean flag = false;
 
+        //检查会被覆盖的文件
+        for (File s:CWD.listFiles()
+             ) {
+            if (!s.isFile())continue;
+            Blob t = new Blob(s);
+            if (max.contains(s.getName())&&(!head.getBlobHashName(s.getName()).equals(t.getId()))){
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
+
         //处理sp中的文件
         for (String s:max
              ) {
