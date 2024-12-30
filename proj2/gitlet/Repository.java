@@ -2,6 +2,8 @@ package gitlet;
 
 
 
+
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -540,28 +542,8 @@ public class Repository {
         File f2 = join(Commit.commits,readContentsAsString(f1));
         Commit argBranch = readObject(f2,Commit.class);
 
-        HashSet<String> path = new HashSet<>();
-        Queue<Commit> queue =new LinkedList<>();
-
-        while (queue.size()!=0){
-            path.add(head.getId());
-            queue.add(readObject(join(Commit.commits,head.getParents().get(0)),Commit.class));
-            if (head.getParents().size()>1)queue.add(readObject(join(Commit.commits,head.getParents().get(1)),Commit.class));
-            head=queue.poll();
-        }
-        path.add(head.getId());
-        Commit splitN = head;
-        while (!argBranch.getMessage().equals("initial commit")){
-            if (path.contains(argBranch.getId())){
-                splitN=argBranch;
-                break;
-            }
-            argBranch=readObject(join(Commit.commits,argBranch.getParents().get(0)),Commit.class);
-        }
-        
-        argBranch = readObject(f2,Commit.class);
-        head =readHead();
-        
+        //找到split
+        Commit splitN = fineSplit(argBranch.getId());
         
         if (argBranch.getId().equals(splitN.getId())){
             System.out.println("Given branch is an ancestor of the current branch");
@@ -693,6 +675,39 @@ public class Repository {
 
         
     }
+
+    private static Commit fineSplit(String arg){
+        Commit head = readHead();
+        HashSet<String> path = new HashSet<>();
+        Queue<Commit> queue = new LinkedList<>();
+        queue.add(head);
+        while (queue.size()!=0){
+            head=queue.poll();
+            path.add(head.getId());
+            for (String s:head.getParents()
+                 ) {
+                queue.add(readObject(join(Commit.commits,s),Commit.class));
+            }
+        }
+        Commit argBranch=readObject(join(Commit.commits,arg),Commit.class);
+
+        queue.clear();
+        queue.add(argBranch);
+        while (queue.size()!=0){
+            argBranch=queue.poll();
+            if (path.contains(argBranch.getId())){
+                return argBranch;
+            }
+            for (String s: argBranch.getParents()
+                 ) {
+                queue.add(readObject(join(Commit.commits,s),Commit.class));
+            }
+        }
+        return null;
+
+
+    }
+
 
     private static Blob mergeFile(String s1,String s2,String fileName){
         File f1,f2;
