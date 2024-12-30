@@ -541,9 +541,13 @@ public class Repository {
         Commit argBranch = readObject(f2,Commit.class);
 
         HashSet<String> path = new HashSet<>();
-        while (!head.getMessage().equals("initial commit")){
+        Queue<Commit> queue =new LinkedList<>();
+
+        while (queue.size()!=0){
             path.add(head.getId());
-            head=readObject(join(Commit.commits,head.getParents().get(0)),Commit.class);
+            queue.add(readObject(join(Commit.commits,head.getParents().get(0)),Commit.class));
+            if (head.getParents().size()>1)queue.add(readObject(join(Commit.commits,head.getParents().get(1)),Commit.class));
+            head=queue.poll();
         }
         path.add(head.getId());
         Commit splitN = head;
@@ -585,7 +589,7 @@ public class Repository {
              ) {
             if (!s.isFile())continue;
             Blob t = new Blob(s);
-            if (max.contains(s.getName())&&(!head.getBlobHashName(s.getName()).equals(t.getId()))){
+            if (max.contains(s.getName())&&((!head.isContentNameBlob(s.getName()))||(head.isContentNameBlob(s.getName())&&!head.getBlobHashName(s.getName()).equals(t.getId())))){
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
