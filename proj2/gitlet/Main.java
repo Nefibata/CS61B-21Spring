@@ -37,7 +37,7 @@ public class Main {
                     System.exit(0);
                 }
                 checkOperands(2,args);
-                Repository.commit(args[1],new Date());
+                Repository.commit(args[1],new Date(),null);
                 break;
 
             case "rm":
@@ -104,6 +104,12 @@ public class Main {
                 checkInit();
                 checkOperands(2,args);
                 Repository.reset(args[1]);
+                break;
+
+            case "merge":
+                checkInit();
+                checkOperands(2,args);
+                Repository.merge(args[1]);
                 break;
 
             default:

@@ -1,23 +1,26 @@
 package gitlet;
 
 
+import org.checkerframework.checker.units.qual.C;
+
+import javax.xml.crypto.Data;
+import javax.xml.parsers.SAXParser;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
 
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
+ *
  *  does at a high level.
  *
- *  @author TODO
+ *  @author
  */
 public class Repository {
     /**
-     * TODO: add instance variables here.
+     *
      *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
@@ -44,7 +47,7 @@ public class Repository {
     //head指向文件,储存的是headCommit的id;
     public static final File head=join(GITLET_DIR,"HEAD");
 
-    /* TODO: fill in the rest of this class. */
+
 
 
     private static void initCommit(String message, Date now, List<String> parents){
@@ -126,11 +129,13 @@ public class Repository {
         }
     }
 
-    public static void commit(String message, Date now){
+    public static void commit(String message, Date now,List<String> parents){
         Commit nowHead=readHead();
-        List<String> p=new ArrayList<>();
-        p.add(nowHead.getId());
-        Commit newHead=new Commit(message,p,now);
+        if (parents==null){
+            parents=new ArrayList<>();
+            parents.add(nowHead.getId());
+        }
+        Commit newHead=new Commit(message,parents,now);
         //设置当前tree
         newHead.setBlobsT(nowHead.getBlobsT(),nowHead.getName_blobs());
         File[] stageFilesList = stage.listFiles();
@@ -231,7 +236,6 @@ public class Repository {
             writeContents(wf, (Object) bt.getContent());
         }
         clearStageAndRm();
-
         writeHead(branchFile.getPath());
 
     }
@@ -320,7 +324,6 @@ public class Repository {
         System.out.println();
     }
 
-
     public static void find(String arg) {
         File global = Commit.commits;
         String[] arr = global.list();
@@ -391,6 +394,7 @@ public class Repository {
 
 
     }
+
     private static void format_status_print(String s , String [] arr){
         System.out.println("=== "+s+" ===");
         for (String t:arr
@@ -470,5 +474,172 @@ public class Repository {
     }
 
 
+    public static void merge(String arg) {
+        if (stage.listFiles().length!=0||rmStage.listFiles().length!=0){
+            System.out.println("You have uncommitted changes.");
+            System.exit(0);
+        }
+        File targetBranch = join(branch,arg);
+        if (!targetBranch.exists()){
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        }
+        File headBranch = new File(readContentsAsString(head));
+        if (targetBranch.getName().equals(headBranch.getName())){
+            System.out.println("Cannot merge a branch with itself.");
+            System.exit(0);
+        }
 
+        Commit head =readHead();
+
+        File f1=join(branch,arg);
+        File f2 = join(Commit.commits,readContentsAsString(f1));
+        Commit argBranch = readObject(f2,Commit.class);
+
+        HashSet<String> path = new HashSet<>();
+        while (!head.getMessage().equals("initial commit")){
+            path.add(head.getId());
+            head=readObject(join(Commit.commits,head.getParents().get(0)),Commit.class);
+        }
+        path.add(head.getId());
+        Commit splitN = head;
+        while (!argBranch.getMessage().equals("initial commit")){
+            if (path.contains(argBranch.getId())){
+                splitN=argBranch;
+                break;
+            }
+            argBranch=readObject(join(Commit.commits,argBranch.getParents().get(0)),Commit.class);
+        }
+        
+        argBranch = readObject(f2,Commit.class);
+        head =readHead();
+        
+        
+        if (argBranch.getId().equals(splitN.getId())){
+            System.out.println("Given branch is an ancestor of the current branch");
+            System.exit(0);
+        }
+        if (head.getId().equals(splitN.getId())){
+            checkout(arg);
+            writeContents(new File(readContentsAsString(Repository.head)),readContentsAsString(join(branch,arg)));
+            System.out.println("Current branch fast-forwarded.");
+            System.exit(0);
+        }
+        //分支父亲
+        List<String> p =new LinkedList<>();
+        p.add(head.getId());
+        p.add(argBranch.getId());
+
+        //把文件集合
+        TreeSet<String> max = new TreeSet<>(splitN.getName_blobs().keySet());
+        max.addAll(head.getName_blobs().keySet());
+        max.addAll(argBranch.getName_blobs().keySet());
+        boolean flag = false;
+
+        //处理sp中的文件
+        for (String s:max
+             ) {
+            //文件在三个中都存在
+            if (head.isContentNameBlob(s)&&argBranch.isContentNameBlob(s)&&splitN.isContentNameBlob(s)){
+                //内容一样
+                if (head.getBlobHashName(s).equals(argBranch.getBlobHashName(s))){
+                    continue;
+                }
+                //arg新
+                if (head.getBlobHashName(s).equals(splitN.getBlobHashName(s))){
+                    checkout(f2.getName(),"--",s);
+                    add(s);
+                    continue;
+                }
+                //head新
+                if (argBranch.getBlobHashName(s).equals(splitN.getBlobHashName(s))){
+                    continue;
+                }
+                //文件冲突
+                flag=true;
+                Blob mB=mergeFile(head.getBlobHashName(s),argBranch.getBlobHashName(s),s);
+                File flesh = join(CWD,s);
+                writeContents(flesh, (Object) mB.getContent());
+                add(s);
+                continue;
+            }
+
+            //head和arg中存在
+            if (head.isContentNameBlob(s)&&argBranch.isContentNameBlob(s)&&(!splitN.isContentNameBlob(s))){
+                //内容一样
+                if (head.getBlobHashName(s).equals(argBranch.getBlobHashName(s))){
+                    continue;
+                }
+                //文件冲突
+                flag =true;
+                Blob mB=mergeFile(head.getBlobHashName(s),argBranch.getBlobHashName(s),s);
+                File flesh = join(CWD,s);
+                writeContents(flesh, (Object) mB.getContent());
+                add(s);
+                continue;
+
+            }
+
+            //head和sp中存在
+            if(head.isContentNameBlob(s)&& splitN.isContentNameBlob(s)&&(!argBranch.isContentNameBlob(s))){
+                continue;
+            }
+
+            //arg和sp中存在
+            if(argBranch.isContentNameBlob(s)&& splitN.isContentNameBlob(s)&&(!head.isContentNameBlob(s))){
+                //内容不变
+                if (argBranch.getBlobHashName(s).equals(splitN.getBlobHashName(s))){
+                    continue;
+                }
+                //文件冲突
+                flag=true;
+                Blob mB=mergeFile(null,argBranch.getBlobHashName(s),s);
+                File flesh = join(CWD,s);
+                writeContents(flesh, (Object) mB.getContent());
+                add(s);
+                continue;
+            }
+
+            //只在sp中存在
+            if(splitN.isContentNameBlob(s)&&(!argBranch.isContentNameBlob(s))&&(!head.isContentNameBlob(s))){
+                continue;
+            }
+
+            //只在head中存在
+            if(head.isContentNameBlob(s)&&(!argBranch.isContentNameBlob(s))&&(!splitN.isContentNameBlob(s))){
+                continue;
+            }
+
+            //只在arg中存在
+            if(argBranch.isContentNameBlob(s)&&(!head.isContentNameBlob(s))&&(!splitN.isContentNameBlob(s))){
+                checkout(f2.getName(),"--",s);
+                add(s);
+                continue;
+            }
+
+        }
+        if (flag) System.out.println("Encountered a merge conflict.");
+        commit("Merged "+arg+" into "+new File (readContentsAsString(Repository.head)).getName()+".",new Date(),p);
+
+        
+    }
+
+    private static Blob mergeFile(String s1,String s2,String fileName){
+        File f1,f2;
+        Blob b1,b2;
+        if (s1!=null){f1=join(Blob.blobs,s1);
+         b1 = readObject(f1,Blob.class);}else {
+            b1=new Blob(fileName);
+        }
+
+        if (s2!=null){f2=join(Blob.blobs,s2);
+        b2 = readObject(f2,Blob.class);}else {
+            b2=new Blob(fileName);
+        }
+
+        String merS="<<<<<<< HEAD\r\n" + new String(b1.getContent()) + "=======\r\n" +new String(b2.getContent()) +">>>>>>>";
+
+        return new Blob(fileName,merS);
+
+    }
 }
