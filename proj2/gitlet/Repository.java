@@ -167,6 +167,7 @@ public class Repository {
         }else {
            rmBlob = new Blob(rmFile);
         }
+        boolean stageIN = true;
 
         Commit nowHead=readHead();
         File [] files=stage.listFiles();
@@ -175,6 +176,7 @@ public class Repository {
             ) {
                 if (readObject(temp,Blob.class).getFileName().equals(rmBlob.getFileName())){
                     temp.delete();
+                    stageIN=false;
                 }
 
             }
@@ -182,13 +184,12 @@ public class Repository {
         if (nowHead.isContentNameBlob(rmBlob.getFileName())){
             File temp=join(rmStage,rmBlob.getId());
             writeObject(temp,rmBlob);
-        }else {
+            rmFile.delete();
+        }else if (stageIN){
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
-        rmFile.delete();
-
-
+        
     }
 
     public static void checkout(String branch_name){
