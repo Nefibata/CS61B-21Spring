@@ -132,6 +132,10 @@ public class Repository {
             parents=new ArrayList<>();
             parents.add(nowHead.getId());
         }
+        if (message.equals("")){
+            System.out.println("Please enter a commit message.");
+            System.exit(0);
+        }
         Commit newHead=new Commit(message,parents,now);
         //设置当前tree
         newHead.setBlobsT(nowHead.getBlobsT(),nowHead.getName_blobs());
@@ -189,7 +193,7 @@ public class Repository {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
-        
+
     }
 
     public static void checkout(String branch_name){
@@ -242,7 +246,16 @@ public class Repository {
             System.out.println("Incorrect operands.");
             System.exit(0);
         }
+
         Commit head =readHead();
+        String [] fileList=CWD.list();
+        for (String st:fileList
+        ) {
+            if (head.isContentNameBlob(st))continue;
+            if (st.equals(".gitlet"))continue;
+            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+            System.exit(0);
+        }
         if (head.isContentNameBlob(file_name)){
            String hashName= head.getBlobHashName(file_name);
            File temp =join(Blob.blobs,hashName);
@@ -266,6 +279,16 @@ public class Repository {
             System.out.println("Incorrect operands.");
             System.exit(0);
         }
+        Commit head =readHead();
+        String [] fileList=CWD.list();
+        for (String st:fileList
+        ) {
+            if (head.isContentNameBlob(st))continue;
+            if (st.equals(".gitlet"))continue;
+            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+            System.exit(0);
+        }
+
         File commitFile = join(Commit.commits,commitId);
         if (!commitFile.exists()) {
             String [] shortId = Commit.commits.list();
