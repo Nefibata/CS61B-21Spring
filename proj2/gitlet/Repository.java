@@ -1,10 +1,7 @@
 package gitlet;
 
 
-import org.checkerframework.checker.units.qual.C;
 
-import javax.xml.crypto.Data;
-import javax.xml.parsers.SAXParser;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -270,8 +267,21 @@ public class Repository {
         }
         File commitFile = join(Commit.commits,commitId);
         if (!commitFile.exists()) {
-            System.out.println("No commit with that id exists.");
-            System.exit(0);
+            String [] shortId = Commit.commits.list();
+            boolean flag = true;
+            for (String s:shortId
+                 ) {
+                if (checkShortId(s,commitId)){
+                    commitFile = join(Commit.commits,s);
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag){
+                System.out.println("No commit with that id exists.");
+                System.exit(0);
+            }
+
         }
         Commit branch = readObject(commitFile,Commit.class);
         if (branch.isContentNameBlob(file_name)){
@@ -292,6 +302,15 @@ public class Repository {
             System.exit(0);
         }
 
+    }
+
+    private static boolean checkShortId(String s1 , String shortID){
+        for (int i=0;i<shortID.length();i++){
+            if (!(s1.charAt(i)==shortID.charAt(i))){
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void log(){
@@ -318,7 +337,7 @@ public class Repository {
     private static void format_log_print(Commit p) {
         System.out.println("===");
         System.out.println("commit "+p.getId());
-        if (p.getParents().size()==2) System.out.println("Merge: "+p.getParents().get(0).substring(7) +" "+p.getParents().get(1).substring(7));
+        if (p.getParents().size()==2) System.out.println("Merge: "+p.getParents().get(0).substring(0,7) +" "+p.getParents().get(1).substring(0,7));
         System.out.println("Date: "+p.getDate());
         System.out.println(p.getMessage());
         System.out.println();
@@ -453,7 +472,7 @@ public class Repository {
         }
         for (File t:CWD.listFiles()
         ) {
-            if (t.isFile()&& head.isContentNameBlob(t.getName())){
+            if (t.isFile()){
                 t.delete();
             }
         }
@@ -470,6 +489,7 @@ public class Repository {
             writeContents(w,wB.getContent());
         }
         clearStageAndRm();
+        writeContents(new File(readContentsAsString(Repository.head)),resetC.getId());
 
     }
 
@@ -582,6 +602,17 @@ public class Repository {
 
             //head和sp中存在
             if(head.isContentNameBlob(s)&& splitN.isContentNameBlob(s)&&(!argBranch.isContentNameBlob(s))){
+                //内容不变
+                if (head.getBlobHashName(s).equals(splitN.getBlobHashName(s))){
+                    rm(s);
+                    continue;
+                }
+                //文件冲突
+                flag=true;
+                Blob mB=mergeFile(head.getBlobHashName(s),null,s);
+                File flesh = join(CWD,s);
+                writeContents(flesh, (Object) mB.getContent());
+                add(s);
                 continue;
             }
 
@@ -629,15 +660,15 @@ public class Repository {
         Blob b1,b2;
         if (s1!=null){f1=join(Blob.blobs,s1);
          b1 = readObject(f1,Blob.class);}else {
-            b1=new Blob(fileName);
+            b1=new Blob(fileName,"");
         }
 
         if (s2!=null){f2=join(Blob.blobs,s2);
         b2 = readObject(f2,Blob.class);}else {
-            b2=new Blob(fileName);
+            b2=new Blob(fileName,"");
         }
 
-        String merS="<<<<<<< HEAD\r\n" + new String(b1.getContent()) + "=======\r\n" +new String(b2.getContent()) +">>>>>>>";
+        String merS="<<<<<<< HEAD\r\n" + new String(b1.getContent()) + "=======\r\n" +new String(b2.getContent()) +">>>>>>>\r\n";
 
         return new Blob(fileName,merS);
 
