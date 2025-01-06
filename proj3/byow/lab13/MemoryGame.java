@@ -53,32 +53,72 @@ public class MemoryGame {
         StdDraw.clear(Color.BLACK);
         StdDraw.enableDoubleBuffering();
 
-        //TODO: Initialize random number generator
+        this.rand = new Random(seed);
     }
 
     public String generateRandomString(int n) {
-        //TODO: Generate random string of letters of length n
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i =0 ;i<n;i++){
+            int x = rand.nextInt(26);
+            stringBuilder.append(CHARACTERS[x]);
+        }
+        return stringBuilder.toString();
     }
 
     public void drawFrame(String s) {
-        //TODO: Take the string and display it in the center of the screen
-        //TODO: If game is not over, display relevant game information at the top of the screen
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(this.width/2,this.height/2,s);
+        StdDraw.show();
     }
 
     public void flashSequence(String letters) {
-        //TODO: Display each character in letters, making sure to blank the screen between letters
+        for (int i =0;i<letters.length();i++){
+            drawFrame(String.valueOf(letters.charAt(i)));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            drawFrame("");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public String solicitNCharsInput(int n) {
-        //TODO: Read n letters of player input
-        return null;
+        StringBuilder stringBuilder =new StringBuilder();
+        for (int i=0;i<n;i++){
+            while (!StdDraw.hasNextKeyTyped()){
+
+            }
+            stringBuilder.append(StdDraw.nextKeyTyped());
+            drawFrame(stringBuilder.toString());
+        }
+        return stringBuilder.toString();
     }
 
     public void startGame() {
-        //TODO: Set any relevant variables before the game starts
+        this.gameOver=false;
+        this.round=1;
+        drawFrame("Round: ");
+        while (!gameOver){
+            String nowS=generateRandomString(round);
 
-        //TODO: Establish Engine loop
+            flashSequence(nowS);
+
+            String userType=solicitNCharsInput(round);
+            if (!userType.equals(nowS)){
+                gameOver=false;
+                break;
+            }
+            round++;
+        }
+        drawFrame("Game over! Round:"+String.valueOf(this.round));
     }
 
 }
