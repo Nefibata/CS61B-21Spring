@@ -42,7 +42,7 @@ public class Engine {
 
     }
     private void gameRun(TETile[][] world) {
-        
+
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
 
@@ -131,7 +131,7 @@ public class Engine {
 
         TETile[][] finalWorldFrame ;
         String seed = input.substring(1,input.length()-1);
-        finalWorldFrame = seedMakeWorld(Integer.parseInt(seed));
+        finalWorldFrame = seedMakeWorld(Long.parseLong(seed));
 
         return finalWorldFrame;
     }
