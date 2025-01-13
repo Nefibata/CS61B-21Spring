@@ -30,6 +30,7 @@ public class Engine {
             case 'n' :
             case 'N':
                 world = newGame();
+                gameRun(world);
                 break;
             case 'l' :
             case 'L' :
@@ -37,11 +38,14 @@ public class Engine {
             case 'Q':
             case 'q':
                 break;
-
-
         }
+
+    }
+    private void gameRun(TETile[][] world) {
+        
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
+
 
     }
 
