@@ -63,8 +63,7 @@ public class Engine {
                             load[j][i]=Tileset.WALL;
                             break;
                         case '@':
-                            load[j][i]=new TETile('@', new Color(255, 255, 255), Color.black,
-                                    "player");
+                            load[j][i]=Tileset.AVATAR;
                             break;
                         case '·':
                             load[j][i]=Tileset.FLOOR;
@@ -174,8 +173,7 @@ public class Engine {
             int i =R.nextInt(WIDTH);
             int j =R.nextInt(HEIGHT);
             if (world[i][j].description().equals(Tileset.FLOOR.description())){
-                world[i][j]=new TETile('@', new Color(255, 255, 255), Color.black,
-                        "player");
+                world[i][j]=Tileset.AVATAR;
                 return new int[]{i,j};
             }
 
@@ -457,6 +455,6 @@ public class Engine {
 
     @Override
     public String toString() {
-        return "byow.Core.Engine@"+String.valueOf(world.hashCode());
+        return "byow.Core.Engine@"+world.toString();
     }
 }
