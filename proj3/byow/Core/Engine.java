@@ -287,7 +287,6 @@ public class Engine {
                     char q=op.charAt(i+1);
                     if (q=='q'||q=='Q'){
                         quitAndSave(world);
-                        return;
                     }
                     break;
 
@@ -327,33 +326,28 @@ public class Engine {
         TETile[][] world =new TETile[WIDTH][HEIGHT];
         filedNothing(world);
         R.setSeed(seed);
+        return addTile(world);
+
+    }
+
+    private TETile[][] addTile(TETile[][] world) {
         List<int[]> rooms=addRooms(world);
         addCorridor(rooms,world);
         for (int i=0;i<WIDTH;i++){
             for (int j=0;j<HEIGHT;j++){
                 if (isWall(i,j,world)){
-                    world[i][j]=Tileset.WALL;
+                    world[i][j]= Tileset.WALL;
                 }
             }
         }
         addgate(world);
         return world;
-
     }
+
     private TETile[][] MakeWorld(){
         TETile[][] world =new TETile[WIDTH][HEIGHT];
         filedNothing(world);
-        List<int[]> rooms=addRooms(world);
-        addCorridor(rooms,world);
-        for (int i=0;i<WIDTH;i++){
-            for (int j=0;j<HEIGHT;j++){
-                if (isWall(i,j,world)){
-                    world[i][j]=Tileset.WALL;
-                }
-            }
-        }
-        addgate(world);
-        return world;
+        return addTile(world);
 
     }
 
