@@ -277,7 +277,7 @@ public class Engine {
                     go(player,world,player[0],player[1]+1);
                     break;
                 case ':':
-                    char q=getInputC();
+                    char q=op.charAt(i+1);
                     if (q=='q'||q=='Q'){
                         quitAndSave(world);
                         return;
