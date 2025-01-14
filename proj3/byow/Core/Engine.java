@@ -302,11 +302,12 @@ public class Engine {
     }
 
     private String getInputSeed(String input) {
+        if (!(input.charAt(0) =='N'||input.charAt(0) =='n'))return "";
         String seedt=input.substring(1);
         StringBuilder sb=new StringBuilder();
         for (int i=0;i<seedt.length();i++){
             if (seedt.charAt(i)=='S'||seedt.charAt(i)=='s'){
-                break;
+                return sb.toString();
             }
             sb.append(seedt.charAt(i));
         }
