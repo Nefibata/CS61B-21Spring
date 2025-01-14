@@ -455,4 +455,8 @@ public class Engine {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "byow.Core.Engine@"+String.valueOf(world.hashCode());
+    }
 }
