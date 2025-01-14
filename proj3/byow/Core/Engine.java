@@ -280,7 +280,6 @@ public class Engine {
                     char q=getInputC();
                     if (q=='q'||q=='Q'){
                         quitAndSave(world);
-                        System.exit(0);
                         return;
                     }
                     break;
