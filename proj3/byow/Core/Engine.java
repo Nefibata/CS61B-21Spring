@@ -287,6 +287,7 @@ public class Engine {
                     char q=op.charAt(i+1);
                     if (q=='q'||q=='Q'){
                         quitAndSave(world);
+                        return;
                     }
                     break;
 
