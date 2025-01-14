@@ -281,6 +281,7 @@ public class Engine {
                 case 'l':
                 case 'L':
                     world=loadGame();
+                    player=getPlayer(world);
                     break;
                 case ':':
                     char q=op.charAt(i+1);
