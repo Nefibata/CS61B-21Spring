@@ -291,8 +291,7 @@ public class Engine {
                     break;
 
             }
-            ter.initialize(WIDTH,HEIGHT);
-            ter.renderFrame(world);
+
         }
     }
 
