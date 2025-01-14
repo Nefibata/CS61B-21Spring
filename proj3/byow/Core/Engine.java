@@ -247,7 +247,11 @@ public class Engine {
 
         TETile[][] finalWorldFrame ;
         String seed = getInputSeed(input);
-        finalWorldFrame = seedMakeWorld(Long.parseLong(seed));
+        if (seed==null||seed.equals("")){
+            finalWorldFrame=MakeWorld();
+        }else {
+            finalWorldFrame = seedMakeWorld(Long.parseLong(seed));
+        }
         world=finalWorldFrame;
         addPlayer(finalWorldFrame);
         String op=getInputOp(input);
@@ -320,6 +324,22 @@ public class Engine {
         TETile[][] world =new TETile[WIDTH][HEIGHT];
         filedNothing(world);
         R.setSeed(seed);
+        List<int[]> rooms=addRooms(world);
+        addCorridor(rooms,world);
+        for (int i=0;i<WIDTH;i++){
+            for (int j=0;j<HEIGHT;j++){
+                if (isWall(i,j,world)){
+                    world[i][j]=Tileset.WALL;
+                }
+            }
+        }
+        addgate(world);
+        return world;
+
+    }
+    private TETile[][] MakeWorld(){
+        TETile[][] world =new TETile[WIDTH][HEIGHT];
+        filedNothing(world);
         List<int[]> rooms=addRooms(world);
         addCorridor(rooms,world);
         for (int i=0;i<WIDTH;i++){
