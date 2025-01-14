@@ -17,6 +17,8 @@ public class TERenderer {
     private int height;
     private int xOffset;
     private int yOffset;
+    private static final int ww=40;
+    private static final int wh=40;
 
     /**
      * Same functionality as the other initialization method. The only difference is that the xOff
@@ -98,4 +100,45 @@ public class TERenderer {
         }
         StdDraw.show();
     }
+    public void memu() {
+        StdDraw.setCanvasSize(ww*16,  wh*16);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, ww);
+        StdDraw.setYscale(0, wh);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(ww/2,ww/1.2,"THE GAME");
+        StdDraw.text(ww/2,wh/2.1,"new game(n)");
+        StdDraw.text(ww/2,wh/2.5,"load game(l)");
+        StdDraw.text(ww/2,wh/3,"quit(q)");
+        StdDraw.show();
+    }
+
+    public void drawFrame(String s,int x,int y) {
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(x,y,s);
+        StdDraw.show();
+    }
+    public void renderFrame(TETile[][] world,String s,int m,int n) {
+        int numXTiles = world.length;
+        int numYTiles = world[0].length;
+        StdDraw.clear(new Color(0, 0, 0));
+        for (int x = 0; x < numXTiles; x += 1) {
+            for (int y = 0; y < numYTiles; y += 1) {
+                if (world[x][y] == null) {
+                    throw new IllegalArgumentException("Tile at position x=" + x + ", y=" + y
+                            + " is null.");
+                }
+                world[x][y].draw(x + xOffset, y + yOffset);
+            }
+        }
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(m,n,s);
+        StdDraw.show();
+
+    }
+
 }

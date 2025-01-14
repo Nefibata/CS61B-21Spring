@@ -6,6 +6,7 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -14,17 +15,14 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private static final int ww=40;
-    private static final int wh=40;
     private static final Random R= new Random();
-
+    private TETile[][] world = new TETile[WIDTH][HEIGHT];
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
-        memu();
+        ter.memu();
         char s=getInputC();
         switch (s){
             case 'n' :
@@ -34,24 +32,163 @@ public class Engine {
                 break;
             case 'l' :
             case 'L' :
+                world=loadGame();
+                gameRun(world);
                 break;
             case 'Q':
             case 'q':
+                quitAndSave(world);
                 break;
         }
 
     }
-    private void gameRun(TETile[][] world) {
 
-        ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(world);
+    private TETile[][] loadGame() {
+        TETile[][] load =new TETile[WIDTH][HEIGHT];
+        File f=new File(System.getProperty("user.dir")+"\\byow\\Core\\savefile.txt");
+        Scanner sc = null;
+        try {
+            sc = new Scanner(new FileReader(f));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        for (int i=HEIGHT-1;i>=0;i--){
+            String s=sc.nextLine();
+            System.out.println(s.length());
+            for (int j=0;j<WIDTH;j++){
+                    switch (s.charAt(j)){
+                        case ' ':
+                            load[j][i]=Tileset.NOTHING;
+                            break;
+                        case '#':
+                            load[j][i]=Tileset.WALL;
+                            break;
+                        case '@':
+                            load[j][i]=new TETile('@', new Color(255, 255, 255), Color.black,
+                                    "player");
+                            break;
+                        case '·':
+                            load[j][i]=Tileset.FLOOR;
+                            break;
+                        default:
+                            load[j][i]=Tileset.LOCKED_DOOR;
+                            break;
+                    }
+                    
+                }
+            }
+
+        return load;
+
+    }
+
+    private void gameRun(TETile[][] world) {
+        int [] player=getPlayer(world);
+        ter.initialize(WIDTH+5, HEIGHT+5,5,5);
+        while (true){
+            int mx= (int) StdDraw.mouseX();
+            int my= (int) StdDraw.mouseY();
+            ter.renderFrame(world,world[mx-5][my-5].description(),1,1);
+            char c=getInputC();
+            switch (c){
+                case 'a':
+                case 'A':
+                    go(player,world,player[0]-1,player[1]);
+                    break;
+                case 's':
+                case 'S':
+                    go(player,world,player[0],player[1]-1);
+                    break;
+                case 'D':
+                case 'd':
+                    go(player,world,player[0]+1,player[1]);
+                    break;
+                case 'w':
+                case 'W':
+                    go(player,world,player[0],player[1]+1);
+                    break;
+                case ':':
+                    char q=getInputC();
+                    if (q=='q'||q=='Q'){
+                        quitAndSave(world);
+                        System.exit(0);
+                        return;
+                    }
+                    break;
+
+            }
+        }
+
+    }
+
+    private int[] getPlayer(TETile[][] world) {
+        int [] player=new int[2];
+        for (int i=0;i<WIDTH;i++){
+            for (int j=0;j<HEIGHT;j++){
+                if (world[i][j].description().equals("player")){
+                    player[0]=i;
+                    player[1]=j;
+                    return player;
+                }
+            }
+        }
+        return player;
+    }
+
+    private void quitAndSave(TETile[][] world) {
+        File f=new File(System.getProperty("user.dir")+"\\byow\\Core\\savefile.txt");
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String s=TETile.toString(world);
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(f);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            writer.write(s);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void go(int[] player, TETile[][] world,int x,int y) {
+        if (x<0||x>=WIDTH||y<0||y>=HEIGHT)return;
+        if (world[x][y].description().equals(Tileset.FLOOR.description())){
+            world[x][y]=world[player[0]][player[1]];
+            world[player[0]][player[1]]=Tileset.FLOOR;
+            player[0]=x;
+            player[1]=y;
+        }
+    }
+
+    private int[] addPlayer(TETile[][] world) {
+        while (true){
+            int i =R.nextInt(WIDTH);
+            int j =R.nextInt(HEIGHT);
+            if (world[i][j].description().equals(Tileset.FLOOR.description())){
+                world[i][j]=new TETile('@', new Color(255, 255, 255), Color.black,
+                        "player");
+                return new int[]{i,j};
+            }
+
+        }
 
 
     }
 
     private TETile[][] newGame() {
         TETile[][] world;
-        drawFrame("random seed",wh/2,ww/2);
+        ter.drawFrame("random seed",40/2,40/2);
         String seed=getInputS();
         world=interactWithInputString("n"+seed+"s");
         return world;
@@ -77,28 +214,7 @@ public class Engine {
 
     }
 
-    private void memu() {
-        StdDraw.setCanvasSize(ww*16,  wh*16);
-        Font font = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(font);
-        StdDraw.setXscale(0, ww);
-        StdDraw.setYscale(0, wh);
-        StdDraw.enableDoubleBuffering();
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(ww/2,ww/1.2,"THE GAME");
-        StdDraw.text(ww/2,wh/2.1,"new game(n)");
-        StdDraw.text(ww/2,wh/2.5,"load game(l)");
-        StdDraw.text(ww/2,wh/3,"quit(q)");
-        StdDraw.show();
-    }
 
-    public void drawFrame(String s,int x,int y) {
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(x,y,s);
-        StdDraw.show();
-    }
 
     /**
      * Method used for autograding and testing your code. The input string will be a series
@@ -130,10 +246,72 @@ public class Engine {
         // that works for many different input types.
 
         TETile[][] finalWorldFrame ;
-        String seed = input.substring(1,input.length()-1);
+        String seed = getInputSeed(input);
         finalWorldFrame = seedMakeWorld(Long.parseLong(seed));
-
+        world=finalWorldFrame;
+        addPlayer(finalWorldFrame);
+        String op=getInputOp(input);
+        playerOpstring(op);
         return finalWorldFrame;
+    }
+
+    private void playerOpstring(String op) {
+        if (op.length()==0)return;
+        int [] player=getPlayer(world);
+        for (int i=0;i<op.length();i++){
+            switch (op.charAt(i)){
+                case 'a':
+                case 'A':
+                    go(player,world,player[0]-1,player[1]);
+                    break;
+                case 's':
+                case 'S':
+                    go(player,world,player[0],player[1]-1);
+                    break;
+                case 'D':
+                case 'd':
+                    go(player,world,player[0]+1,player[1]);
+                    break;
+                case 'w':
+                case 'W':
+                    go(player,world,player[0],player[1]+1);
+                    break;
+                case ':':
+                    char q=getInputC();
+                    if (q=='q'||q=='Q'){
+                        quitAndSave(world);
+                        System.exit(0);
+                        return;
+                    }
+                    break;
+
+            }
+        }
+    }
+
+    private String getInputOp(String input) {
+        String opt=input.substring(1);
+        StringBuilder sb=new StringBuilder();
+        boolean flag=false;
+        for (int i=0;i<opt.length();i++){
+            if (flag)sb.append(opt.charAt(i));
+            if ((opt.charAt(i)=='S'||opt.charAt(i)=='s')&& !flag){
+                flag=true;
+            }
+        }
+        return sb.toString();
+    }
+
+    private String getInputSeed(String input) {
+        String seedt=input.substring(1);
+        StringBuilder sb=new StringBuilder();
+        for (int i=0;i<seedt.length();i++){
+            if (seedt.charAt(i)=='S'||seedt.charAt(i)=='s'){
+                break;
+            }
+            sb.append(seedt.charAt(i));
+        }
+        return sb.toString();
     }
 
     //rooms 0 x坐标 1 y坐标 2 x长 3 y长
@@ -151,8 +329,20 @@ public class Engine {
                 }
             }
         }
+        addgate(world);
         return world;
 
+    }
+
+    private void addgate(TETile[][] world) {
+        for (int i=0;i<WIDTH;i++){
+            for (int j=0;j<HEIGHT;j++){
+                if (world[WIDTH-i-1][HEIGHT-1-j].description().equals(Tileset.WALL.description())){
+                    world[WIDTH-i-1][HEIGHT-1-j]=Tileset.LOCKED_DOOR;
+                    return;
+                }
+            }
+        }
     }
 
     private boolean isWall(int i, int j, TETile[][] world) {
@@ -201,8 +391,8 @@ public class Engine {
         List<int[]> rooms=new ArrayList<>();
         for (int rs=0;rs<R.nextInt(20)+10;rs++){
             TETile[][] room=randomRoom();
-            int xR=R.nextInt(WIDTH-room.length-1)+1;
-            int yR=R.nextInt(HEIGHT-room[0].length-1)+1;
+            int xR=R.nextInt(WIDTH-room.length-2)+2;
+            int yR=R.nextInt(HEIGHT-room[0].length-2)+2;
             int[] temp=new int [4];
             temp[0]=xR;
             temp[1]=yR;
@@ -245,4 +435,5 @@ public class Engine {
         }
         return true;
     }
+
 }
