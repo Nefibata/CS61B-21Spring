@@ -54,7 +54,6 @@ public class Engine {
         }
         for (int i=HEIGHT-1;i>=0;i--){
             String s=sc.nextLine();
-            System.out.println(s.length());
             for (int j=0;j<WIDTH;j++){
                     switch (s.charAt(j)){
                         case ' ':
@@ -111,7 +110,6 @@ public class Engine {
                     char q=getInputC();
                     if (q=='q'||q=='Q'){
                         quitAndSave(world);
-                        System.exit(0);
                         return;
                     }
                     break;
