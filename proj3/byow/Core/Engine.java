@@ -278,6 +278,10 @@ public class Engine {
                 case 'W':
                     go(player,world,player[0],player[1]+1);
                     break;
+                case 'l':
+                case 'L':
+                    world=loadGame();
+                    break;
                 case ':':
                     char q=op.charAt(i+1);
                     if (q=='q'||q=='Q'){
