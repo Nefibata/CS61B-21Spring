@@ -287,15 +287,17 @@ public class Engine {
                     char q=op.charAt(i+1);
                     if (q=='q'||q=='Q'){
                         quitAndSave(world);
-                        return;
                     }
                     break;
 
             }
+            ter.initialize(WIDTH,HEIGHT);
+            ter.renderFrame(world);
         }
     }
 
     private String getInputOp(String input) {
+        if (!(input.charAt(0)=='n'||input.charAt(0)=='N'))return input;
         String opt=input.substring(1);
         StringBuilder sb=new StringBuilder();
         boolean flag=false;
